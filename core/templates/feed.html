@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Лента</h1>
+
+  <div class="composer">
+    <form method="post" action="{% url 'create_post' %}" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ post_form.body }}
+      {{ post_form.image }}
+      <button type="submit">Опубликовать</button>
+    </form>
+  </div>
+
+  {% for post in page_obj.object_list %}
+    {% include 'partials/post_card.html' %}
+  {% empty %}
+    <p>Пока нет постов. Подпишитесь на кого‑нибудь или создайте свой первый пост!</p>
+  {% endfor %}
+
+  <div class="pagination">
+    {% if page_obj.has_previous %}
+      <a href="?page={{ page_obj.previous_page_number }}">← Назад</a>
+    {% endif %}
+    <span>Стр. {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+      <a href="?page={{ page_obj.next_page_number }}">Вперед →</a>
+    {% endif %}
+  </div>
+{% endblock %}

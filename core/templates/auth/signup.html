@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Регистрация</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="field">{{ form.username.label_tag }} {{ form.username }}</div>
+    <div class="field">{{ form.email.label_tag }} {{ form.email }}</div>
+    <div class="field">{{ form.password1.label_tag }} {{ form.password1 }}</div>
+    <div class="field">{{ form.password2.label_tag }} {{ form.password2 }}</div>
+    <button type="submit">Создать аккаунт</button>
+  </form>
+  <p>Уже есть аккаунт? <a href="{% url 'login' %}">Войдите</a>.</p>
+{% endblock %}

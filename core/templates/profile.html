@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="profile-header">
+    <div class="avatar">
+      {% if profile.avatar %}
+        <img src="{{ profile.avatar.url }}" alt="avatar">
+      {% else %}
+        <div class="avatar-placeholder">{{ profile_user.username|first|upper }}</div>
+      {% endif %}
+    </div>
+    <div>
+      <h1>@{{ profile_user.username }}</h1>
+      <p>{{ profile.bio }}</p>
+      <p>
+        <b>{{ profile_user.followers.count }}</b> подписчиков ·
+        <b>{{ profile_user.following.count }}</b> подписки ·
+        <b>{{ posts.count }}</b> постов
+      </p>
+      {% if request.user != profile_user %}
+        <form method="post" action="{% url 'toggle_follow' profile_user.username %}">
+          {% csrf_token %}
+          <button type="submit">{% if is_following %}Отписаться{% else %}Подписаться{% endif %}</button>
+        </form>
+      {% else %}
+        <form method="post" action="{% url 'update_profile' %}" enctype="multipart/form-data" class="profile-edit">
+          {% csrf_token %}
+          {{ profile_form.bio }}
+          {{ profile_form.avatar }}
+          <button type="submit">Сохранить профиль</button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+
+  <h2>Посты</h2>
+  {% for post in posts %}
+    {% include 'partials/post_card.html' %}
+  {% empty %}
+    <p>Постов пока нет.</p>
+  {% endfor %}
+{% endblock %}

@@ -1,0 +1,32 @@
+{% load humanize %}
+<article class="post">
+  <header>
+    <a href="{% url 'profile' post.author.username %}">@{{ post.author.username }}</a>
+    <span class="time">{{ post.created_at|naturaltime }}</span>
+  </header>
+  <p>{{ post.body|linebreaksbr }}</p>
+  {% if post.image %}
+    <img src="{{ post.image.url }}" alt="image" class="post-image" />
+  {% endif %}
+  <footer>
+    <form method="post" action="{% url 'toggle_like' post.id %}" class="inline">
+      {% csrf_token %}
+      <button type="submit">❤ {{ post.likes.count }}</button>
+    </form>
+    <details>
+      <summary>Комментарии ({{ post.comments.count }})</summary>
+      <div class="comments">
+        {% for c in post.comments.all %}
+          <div class="comment"><b>@{{ c.user.username }}</b> {{ c.body }}</div>
+        {% empty %}
+          <div class="comment empty">Нет комментариев</div>
+        {% endfor %}
+        <form method="post" action="{% url 'add_comment' post.id %}">
+          {% csrf_token %}
+          {{ comment_form.body }}
+          <button type="submit">Отправить</button>
+        </form>
+      </div>
+    </details>
+  </footer>
+</article>
